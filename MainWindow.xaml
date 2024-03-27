@@ -1,9 +1,19 @@
-<Window x:Class="Calculator.MainWindow"
+<Window x:Class="kalkulatur.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="450" Width="800">
-    <Canvas Name="paintCanvas" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" Background="White">
-        
-    </Canvas>
+        Title="Handwritten Calculator" Height="450" Width="600">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="113*"/>
+            <ColumnDefinition Width="488*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <Button x:Name="RecognizeButton" Grid.Row="0" Content="Распознать и вычислить" Click="RecognizeButton_Click" Grid.ColumnSpan="2" Margin="0,0,0,414" Grid.RowSpan="2"/>
+
+        <Canvas x:Name="canvas" Grid.Row="1" Background="White" MouseMove="Canvas_MouseMove" MouseDown="Canvas_MouseDown" Grid.ColumnSpan="2"/>
+    </Grid>
 </Window>
