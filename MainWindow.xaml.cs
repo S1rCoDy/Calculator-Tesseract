@@ -108,13 +108,40 @@ namespace Calculator
                         var text = page.GetText();
                         if (text.Contains("="))
                         {
-                            MessageBox.Show(text, "Tesseract Output");
+                            var equation = text.Split('=')[0].Trim();
+                            var result = Calculate(equation);
+                            MessageBox.Show(result.ToString(), "Результат вычисления");
                             _timer.Stop();
                         }
                     }
                 }
             }
+        }
 
+        private double Calculate(string equation)
+        {
+            var elements = equation.Split(new[] { '+', '-' }, StringSplitOptions.RemoveEmptyEntries);
+            double result = 0;
+
+            foreach (var element in elements)
+            {
+                if (element.Contains("+"))
+                {
+                    var numbers = element.Split('+').Select(double.Parse);
+                    result += numbers.Sum();
+                }
+                else if (element.Contains("-"))
+                {
+                    var numbers = element.Split('-').Select(double.Parse);
+                    result -= numbers.Sum();
+                }
+                else
+                {
+                    result += double.Parse(element);
+                }
+            }
+
+            return result;
         }
     }
 }
