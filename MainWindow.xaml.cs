@@ -1,13 +1,13 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Media.Imaging;
 using Tesseract;
-using System.Text.RegularExpressions;
+using Microsoft.Win32;
+using System.Windows.Controls;
 using System.Windows.Threading;
-using System.Data;
 
 namespace Calculator
 {
@@ -15,26 +15,40 @@ namespace Calculator
     {
         private System.Drawing.Point _currentPoint;
         private DispatcherTimer _timer;
+        private bool _isTabPressed;
 
         public MainWindow()
         {
             InitializeComponent();
             _currentPoint = new System.Drawing.Point();
+            this.KeyDown += MainWindow_KeyDown;
 
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(2);
-            _timer.Tick += CheckScreen;
+            _timer.Tick += Timer_Tick;
             _timer.Start();
-
-            this.KeyDown += MainWindow_KeyDown;
         }
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Tab)
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg|All files (*.*)|*.*";
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    ImageBrush myBrush = new ImageBrush();
+                    Image image = new Image();
+                    image.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+                    myBrush.ImageSource = image.Source;
+                    paintCanvas.Background = myBrush;
+                }
+            }
+            else if (e.Key == Key.Tab)
             {
                 paintCanvas.Children.Clear();
-                _timer.Start();
+                paintCanvas.Background = Brushes.White;
+                _isTabPressed = true;
             }
         }
 
@@ -64,9 +78,15 @@ namespace Calculator
             }
         }
 
-        private void CheckScreen(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            RenderTargetBitmap rtb = new RenderTargetBitmap((int)this.Width, (int)this.Height, 90, 90, PixelFormats.Pbgra32);
+            if (_isTabPressed)
+            {
+                _isTabPressed = false;
+                return;
+            }
+
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)this.Width, (int)this.Height, 96, 96, PixelFormats.Pbgra32);
             rtb.Render(this);
 
             PngBitmapEncoder png = new PngBitmapEncoder();
@@ -79,22 +99,22 @@ namespace Calculator
 
             using (var engine = new TesseractEngine(@"C:\Учеба\С#\Calculator\Calculator\Tessdata", "eng", EngineMode.Default))
             {
+                engine.SetVariable("tessedit_char_whitelist", "0123456789+-=");
+
                 using (var img = Pix.LoadFromFile("img.png"))
                 {
                     using (var page = engine.Process(img))
                     {
                         var text = page.GetText();
-                        var onlyDigitsAndOperators = Regex.Replace(text, @"[^0-9+-=]", "");
-                        if (onlyDigitsAndOperators.Contains("="))
+                        if (text.Contains("="))
                         {
-                            var expression = onlyDigitsAndOperators.Split('=')[0];
-                            var result = new DataTable().Compute(expression, null);
-                            MessageBox.Show(result.ToString(), "Tesseract Output");
+                            MessageBox.Show(text, "Tesseract Output");
                             _timer.Stop();
                         }
                     }
                 }
             }
+
         }
     }
 }
