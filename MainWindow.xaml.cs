@@ -1,4 +1,4 @@
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System.IO;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using System.Windows;
 using Tesseract;
 using System.Windows.Controls;
+
 
 namespace Calculator
 {
@@ -142,6 +143,20 @@ namespace Calculator
             }
 
             return result;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var newWindow = new MainWindow();
+            newWindow.Width = 780;
+            newWindow.Height = 475;
+
+            var image = new Image();
+            var fullFilePath = @"C:\Учеба\С#\Calculator\Calculator\Component\Images\about-prog.png";
+            image.Source = new BitmapImage(new Uri(fullFilePath, UriKind.Absolute));
+            newWindow.Content = image;
+
+            newWindow.Show();
         }
     }
 }
