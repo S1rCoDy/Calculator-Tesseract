@@ -18,3 +18,7 @@
 ![image](https://github.com/S1rCoDy/Calculator-Tesseract/assets/148555828/f6eb9f3b-90e8-4c78-a0e8-3acf6301cbc0)
 ![image](https://github.com/S1rCoDy/Calculator-Tesseract/assets/148555828/352fe937-6860-4be7-8c6e-657ef63bad2e)
 
+5)Приложение готово к использованию.
+
+Также чтобы оказать финансовую поддержку вы можете перейти по ссылке снизу
+https://www.donationalerts.com/r/nevergona12
