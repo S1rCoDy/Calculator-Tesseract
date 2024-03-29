@@ -56,7 +56,7 @@ namespace Calculator
         private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
-                _currentPoint = new System.Drawing.Point((int)e.GetPosition(this).X, (int)e.GetPosition(this).Y);
+                _currentPoint = new System.Drawing.Point((int)e.GetPosition(paintCanvas).X, (int)e.GetPosition(paintCanvas).Y);
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
@@ -68,12 +68,12 @@ namespace Calculator
                     Stroke = Brushes.Black,
                     X1 = _currentPoint.X,
                     Y1 = _currentPoint.Y,
-                    X2 = e.GetPosition(this).X,
-                    Y2 = e.GetPosition(this).Y,
+                    X2 = e.GetPosition(paintCanvas).X,
+                    Y2 = e.GetPosition(paintCanvas).Y,
                     StrokeThickness = 8
                 };
 
-                _currentPoint = new System.Drawing.Point((int)e.GetPosition(this).X, (int)e.GetPosition(this).Y);
+                _currentPoint = new System.Drawing.Point((int)e.GetPosition(paintCanvas).X, (int)e.GetPosition(paintCanvas).Y);
 
                 paintCanvas.Children.Add(line);
             }
@@ -86,9 +86,12 @@ namespace Calculator
                 _isTabPressed = false;
                 return;
             }
-
-            RenderTargetBitmap rtb = new RenderTargetBitmap((int)this.Width, (int)this.Height, 96, 96, PixelFormats.Pbgra32);
-            rtb.Render(this);
+            if(paintCanvas.ActualWidth <= 0 && paintCanvas.ActualHeight <= 0)
+            {
+                return;
+            }
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)paintCanvas.ActualWidth, (int)paintCanvas.ActualHeight, 64, 64, PixelFormats.Pbgra32);
+            rtb.Render(paintCanvas);
 
             PngBitmapEncoder png = new PngBitmapEncoder();
             png.Frames.Add(BitmapFrame.Create(rtb));
@@ -148,15 +151,19 @@ namespace Calculator
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var newWindow = new MainWindow();
-            newWindow.Width = 780;
-            newWindow.Height = 475;
+            newWindow.Width = 680;
+            newWindow.Height = 775;
 
             var image = new Image();
             var fullFilePath = @"C:\Учеба\С#\Calculator\Calculator\Component\Images\about-prog.png";
             image.Source = new BitmapImage(new Uri(fullFilePath, UriKind.Absolute));
-            newWindow.Content = image;
+
+            var scrollViewer = new ScrollViewer();
+            scrollViewer.Content = image;
+            newWindow.Content = scrollViewer;
 
             newWindow.Show();
         }
+
     }
 }
